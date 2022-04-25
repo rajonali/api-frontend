@@ -1,20 +1,8 @@
 import '../styles/globals.css'
 import {ApolloProvider, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
 import client from '../apollo-client'
+import { AuthProvider} from '../utils/auth'
 
-
-  
-  {/* 
-  const client = async () => {
-    const client = new ApolloClient({
-        link: new HttpLink({
-          url: 'http://localhost:3000/graphql'
-        }),
-        ssrMode: typeof window === 'undefined',
-        cache: new InMemoryCache(),
-    });
-}
-*/}
   
 
 
@@ -22,10 +10,10 @@ function MyApp({ Component, pageProps })
 {
 
   return(
-  <ApolloProvider client={client}>
+    <AuthProvider>
   <Component {...pageProps} />
-  </ApolloProvider>
-)
+  </AuthProvider>)  
+ 
 }
 
 export default MyApp

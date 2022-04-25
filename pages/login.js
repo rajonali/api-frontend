@@ -37,8 +37,7 @@ export function SignIn() {
   )
 }
 
-export default function Home() {
-  
+export default function Login() {
   return (
     <div className={styles.container}>
       <Head>

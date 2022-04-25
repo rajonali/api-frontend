@@ -16,36 +16,6 @@ import axios from 'axios';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 
 
-const authContext = createContext()
-
-export function AuthProvider({ children }) {
-  const auth = useProvideAuth()
-
-
-  return (
-    <authContext.Provider value={auth}>
-      <ApolloProvider client={auth.createApolloClient()}>
-        {children}
-      </ApolloProvider>
-    </authContext.Provider>
-  )
-}
-
-export const useAuth = () => {
-  return useContext(authContext)
-}
-
-function useProvideAuth() {
-  const [authToken, setAuthToken] = useState(null)
-
-  const getAuthHeaders = () => {
-    if (!authToken)
-    {return null }
-    
-    return {
-      "x-auth-token": authToken,
-    }
-  }
 
 
 
@@ -55,7 +25,6 @@ function useProvideAuth() {
 const client = new ApolloClient({
   link: new HttpLink({ uri: 'http://localhost:3001/graphql' }),
   cache: new InMemoryCache(),
-  headers: getAuthHeaders(),
   fetchOptions: {
     mode: 'no-cors',
   },
