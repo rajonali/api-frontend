@@ -15,16 +15,35 @@ import {
    ApolloLink
 } from '@apollo/client'
 
+import {useEffect, useState} from 'react'
 
-function Posts({posts}) {
+export const Posts = () => {
+
+
+  const [postss, setPostss] = useState(null);
+
   
-  const { isSignedIn } = useAuth();
+  const { signIn, isSignedIn, signOut, authToken} = useAuth();
   
+
+  const postquery = gql`
+  query Posts {
+      posts {
+        title
+        id
+      }
+    }
+`
+
+const { data } = useQuery(postquery)
+
+
+
     return (
         <div>
         <h1>Posts</h1>
         <ul>
-            {posts?.map((v) => {
+            {data?.posts.map((v) => {
                 return (<li key={v.id}>{v.title}</li>)
             })
             }
@@ -37,52 +56,17 @@ function Posts({posts}) {
    
 
 
-/*
-    export async function getServerSideProps(req, res) {
-      
-
-
-      
-      const client = new ApolloClient({
-        link: new HttpLink({ uri: 'http://localhost:3001/graphql' }),
-        cache: new InMemoryCache(),
-        fetchOptions: {
-          mode: 'no-cors',
-        },
-      
-      });     
-      
-      
-      const postquery = gql`
-        query Posts {
-            posts {
-              title
-              id
-            }
-          }
-      `
-  
-  
-      
-      //const { loading, error, data } = useQuery(postquery);
-      
-      //console.log(data)
-
 
     
-      return {
-        props: {
-          posts: [{id:1, title:'dasjda'}],
-        },
-      };}
-*/
-
 
 
 export const getServerSideProps = requireAuthentication(
   async (_ctx) => {
+
     return {
-      props: {},
+      props: {
+        posts: [{id:1, title:'dasjda'}],
+      },
     }
   }
 )

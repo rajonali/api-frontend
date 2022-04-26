@@ -23,11 +23,15 @@ export function AuthProvider({ children }) {
 
 
   return (
-    <authContext.Provider value={auth}>
-      <ApolloProvider client={auth.createApolloClient()}>
+            <authContext.Provider value={auth}>
+                    <ApolloProvider client={auth.createApolloClient()}>
+
+
         {children}
-      </ApolloProvider>
-    </authContext.Provider>
+        </ApolloProvider>
+
+        </authContext.Provider>
+
   )
 }
 
@@ -43,36 +47,29 @@ function useProvideAuth() {
     {return null }
     
     return {
-      "x-auth-token": authToken,
+      authorization: `Bearer ${authToken}`,
     }
   }
 
 
-
   function createApolloClient() {
 
+    const link = new HttpLink({ uri: 'http://localhost:3001/graphql' })
 
-const client = new ApolloClient({
-  link: new HttpLink({ uri: 'http://localhost:3001/graphql' }),
-  cache: new InMemoryCache(),
-  headers: getAuthHeaders(),
-  fetchOptions: {
-    mode: 'no-cors',
-  },
+    return new ApolloClient({
+      link,
+      cache: new InMemoryCache(),
 
-});
+      fetchOptions: {
+        mode: 'no-cors',
+      },
 
-return client;
+    });
   }
-
-
-
-
 
   const signOut = () => {
     setAuthToken(null);
     //TODO delete cookies 
-    console.log(authToken);
   }
 
   const signIn = async ({ username, password }) => {
@@ -95,7 +92,6 @@ return client;
       variables: { input : {username, password} },
     })
 
-//    console.log("my result" + JSON.stringify(result))
 
     if (result.data.login.accessToken) {
       //make req to proxy
@@ -110,16 +106,11 @@ return client;
       setAuthToken(result.data.login.accessToken)
           
     }
-//console.log(result.data.login)
     return result.data.login
     
   }
 
-  const isSignedIn = () => {
-//    console.log("coookokieeiei: " + JSON.stringify(parseCookies()))
-//    const cookies = parseCookies()
-//      if (cookies['user'] != null) {
-        
+  const isSignedIn = () => {        
     if (authToken) {
       return true
     } else {
