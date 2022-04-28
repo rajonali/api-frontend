@@ -1,12 +1,11 @@
 import React, { useContext, useReducer, useEffect, useState } from 'react';
 import {Form, Button} from 'react-bootstrap';
-import { Store } from '../../components/Store';
+import { Store } from '../../redux/Store';
 import { toast } from 'react-toastify';
 import { getError } from '../../utils/getError';
 import axios from 'axios';
 import Layout from '../../components/Layout';
 import getCommerce from '../../utils/commerce';
-import { getSession } from "next-auth/react"
 
 
 import dynamic from 'next/dynamic';
@@ -29,7 +28,6 @@ import {
   } from '@material-ui/core';
   
 import { Controller, useForm } from 'react-hook-form';
-import { useSnackbar } from 'notistack';
 import Cookies from 'js-cookie';
 
 
@@ -48,7 +46,6 @@ export default function Account(props) {
       formState: { errors },
       setValue,
     } = useForm();
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const router = useRouter();
     const { userInfo } = state;
   
@@ -61,9 +58,7 @@ export default function Account(props) {
       setValue('email', userInfo.email);
     }, []);
     const submitHandler = async ({ name, email, password, confirmPassword }) => {
-      closeSnackbar();
       if (password !== confirmPassword) {
-        enqueueSnackbar("Passwords don't match", { variant: 'error' });
         return;
       }
       try {
@@ -79,9 +74,7 @@ export default function Account(props) {
         dispatch({ type: 'USER_LOGIN', payload: data });
         Cookies.set('userInfo', data);
   
-        enqueueSnackbar('Profile updated successfully', { variant: 'success' });
       } catch (err) {
-        enqueueSnackbar(getError(err), { variant: 'error' });
       }
     };
 
@@ -150,7 +143,6 @@ export async function getStaticProps(ctx) {
     return {
       props: {
         products,
-        session: await getSession(ctx)
   
       },
     };

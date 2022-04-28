@@ -38,6 +38,10 @@ export const Posts = () => {
 const { data } = useQuery(postquery)
 
 
+function isAuth() {
+  console.log(isSignedIn()) 
+} 
+isAuth();
 
     return (
         <div>
@@ -62,7 +66,6 @@ const { data } = useQuery(postquery)
 
 export const getServerSideProps = requireAuthentication(
   async (_ctx) => {
-
     return {
       props: {
         posts: [{id:1, title:'dasjda'}],

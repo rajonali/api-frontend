@@ -18,12 +18,10 @@ import {
   CART_RETRIEVE_REQUEST,
   CART_RETRIEVE_SUCCESS,
 } from '../utils/constants';
-import { Store } from './Store';
+import { Store } from '../redux/Store';
 import getCommerce from '../utils/commerce';
 
 
-
-//auth
 
 import prisma from '@prisma/client'
 
@@ -47,19 +45,19 @@ export default function Layout({
       const cartData = await commerce.cart.retrieve();
       dispatch({ type: CART_RETRIEVE_SUCCESS, payload: cartData });
       
-      
-      
-
-/** 
-      if (user) {
-        connect to db 
-        lookup cust_id and set cart field to cartData
-      }
-
-      */
+      // TODO save cart data to local db 
 
     };
+
+
+    const fetchUser = async () => {
+      // TODO get user data hook from useAuth context (auth.js)
+      // dispatch auth request and auth retrieve success
+
+    }
+
     fetchCart();
+    //fetchUser();
     
   }, []);
 

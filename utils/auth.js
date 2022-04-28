@@ -102,10 +102,11 @@ function useProvideAuth() {
         },
         body: JSON.stringify(result.data.login)
       });
-      //if true, return request with auth header cookie
-      setAuthToken(result.data.login.accessToken)
-          
+      //if true, return request with auth header cookie          
     }
+
+    setAuthToken(result.data.login.accessToken)
+
     return result.data.login
     
   }

@@ -12,7 +12,6 @@ import {
 import { Alert } from '@material-ui/lab';
 import Layout from '../components/Layout';
 import getCommerce from '../utils/commerce';
-import { getSession } from "next-auth/react"
 
 import { PrismaClient } from "@prisma/client";
 
@@ -39,7 +38,6 @@ export async function getStaticProps(ctx) {
   });
 
 
-  const session = await getSession(ctx);
 
 
 
@@ -48,7 +46,6 @@ export async function getStaticProps(ctx) {
   return {
     props: {
       products,
-      session: await getSession(ctx)
 
     },
   };

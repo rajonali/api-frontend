@@ -10,29 +10,23 @@ import {useAuth} from '../utils/auth'
 export function requireAuthentication(gssp) {
 
   return async (ctx) => {
-/*     const { signIn, isSignedIn, signOut, authToken} = useAuth();
- */
     const { req } = ctx;
     if (req.headers.cookie) {
       const { token } = cookie.parse(req.headers.cookie);
-//      const client = createApolloClient(accessToken);
-//      const GET_USER = getUserQuery;
 
       try {
         //verify token against .env to ensure token was issued by our server and not expired
         verify(token, process.env.SECRET)
 
         //get token objects
-        const {username, accessToken} = decode(token)
+        const {username, refreshToken} = decode(token)
 
       
         // Send a request to the API and verify that the user exists
         // Reject and redirect if the user is undefined or there is no accessToken
-    //    const response = await client.query({ query: GET_USER });
-    //    const { getUser: user } = response.data;
 
 
-        if (!token || !username || !accessToken ){//|| !user || !user.email) {
+        if (!token || !username || !refreshToken ){//|| !user || !user.email) {
           return {
             redirect: {
               permanent: false,

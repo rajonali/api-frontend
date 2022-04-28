@@ -95,9 +95,9 @@ function Checkout(props) {
   // Stepper
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = [
-    'Customer information',
-    'Shipping details',
-    'Payment information',
+    'Customer Information',
+    'Shipping Details',
+    'Payment Information',
   ];
 
   const handleNext = () => {

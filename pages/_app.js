@@ -3,7 +3,7 @@ import {ApolloProvider, ApolloClient, InMemoryCache, HttpLink } from '@apollo/cl
 import client from '../apollo-client'
 import { AuthProvider} from '../utils/auth'
 import { useEffect } from 'react';
-import { StoreProvider } from '../components/Store';
+import { StoreProvider } from '../redux/Store';
 
 MyApp.getInitialProps = async () => {
 

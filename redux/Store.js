@@ -62,25 +62,6 @@ function reducer(state, action) {
 }
 
 
-//fetch user info and store into init state
-
-async function fetchDick(){
-
-  const profile = await prisma.user.findMany({
-    where: { id: "cl1efyj2o00088gtebj2lc4v6" },
-    select: {
-      email: true,
-      name: true,
-    },
-
-  });
-  return profile
-
-}
-
-
-
-
 const initialState = {
   cart: { loading: true,
     cartItems: [],

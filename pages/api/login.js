@@ -15,11 +15,12 @@ import {
   import Cookies from 'cookies'
 import { serialize } from 'cookie';
 
-require('dotenv').config();
 
 
 
 import {sign } from 'jsonwebtoken'
+
+
 export default async (req, res) => {
       
 
@@ -32,9 +33,8 @@ export default async (req, res) => {
     if (username) {
         const token = sign(
             {
-                exp: Math.floor(Date.now() / 1000) * 60 * 60 * 24 * 30,
                 username,
-                accessToken,
+                refreshToken,
             },
             secret
         )
