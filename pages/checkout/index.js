@@ -31,26 +31,33 @@ import Layout from '../../components/Layout';
 import getCommerce from '../../utils/commerce';
 import { useStyles } from '../../utils/styles';
 import { useContext } from 'react';
-import { Store } from '../../components/Store';
-import { CART_RETRIEVE_SUCCESS, ORDER_SET } from '../../utils/constants';
 import Router from 'next/router';
+import { cartRetrieveRequest, cartRetrieveSuccess, orderSet, selectCart } from '../../redux/slices/cart';
+import { useSelector, useDispatch } from 'react-redux';
+
 
 const dev = process.env.NODE_ENV === 'development';
 function Checkout(props) {
   const classes = useStyles();
-  const { state, dispatch } = useContext(Store);
-  const { cart } = state;
+
+  
+  const commerce = getCommerce(process.env.commercePublicKey);
+
+  const cartSelector = useSelector(selectCart)
+  const dispatch = useDispatch()
+
+
 
   useEffect(() => {
-    if (!cart.loading) {
+    if (!cartSelector.cart.loading) {
       generateCheckoutToken();
     }
-  }, [cart.loading]);
+  }, [cartSelector.cart.loading]);
 
   const generateCheckoutToken = async () => {
-    if (cart.data.line_items.length) {
+    if (cartSelector.cart.data.line_items.length) {
       const commerce = getCommerce(props.commercePublicKey);
-      const token = await commerce.checkout.generateToken(cart.data.id, {
+      const token = await commerce.checkout.generateToken(cartSelector.cart.data.id, {
         type: 'cart',
       });
       setCheckoutToken(token);
@@ -138,12 +145,14 @@ function Checkout(props) {
       },
     };
     const commerce = getCommerce(props.commercePublicKey);
+
+    
     try {
       const order = await commerce.checkout.capture(
         checkoutToken.id,
         orderData
       );
-      dispatch({ type: ORDER_SET, payload: order });
+      dispatch(orderSet(order));
       localStorage.setItem('order_receipt', JSON.stringify(order));
 /** 
       if (authenticated){
@@ -165,7 +174,7 @@ function Checkout(props) {
   const refreshCart = async () => {
     const commerce = getCommerce(props.commercePublicKey);
     const newCart = await commerce.cart.refresh();
-    dispatch({ type: CART_RETRIEVE_SUCCESS, payload: newCart });
+    dispatch(cartRetrieveSuccess(newCart));
   };
 
   const [errors, setErrors] = useState([]);
@@ -204,7 +213,6 @@ function Checkout(props) {
   const handleShippingOptionChange = (e) => {
     const currentValue = e.target.value;
     setShippingOption(currentValue);
-    console.log(currentValue);
   };
   const fetchShippingOptions = async (
     checkoutTokenId,
@@ -443,7 +451,7 @@ function Checkout(props) {
       <Typography gutterBottom variant="h6" color="textPrimary" component="h1">
         Checkout
       </Typography>
-      {cart.loading ? (
+      {cartSelector.cart.loading ? (
         <CircularProgress />
       ) : (
         <Grid container spacing={2}>
@@ -519,7 +527,7 @@ function Checkout(props) {
                 <ListItem>
                   <Typography variant="h2">Order summary</Typography>
                 </ListItem>
-                {cart.data.line_items.map((lineItem) => (
+                {cartSelector.cart.data.line_items.map((lineItem) => (
                   <ListItem key={lineItem.id}>
                     <Grid container>
                       <Grid xs={6} item>
@@ -540,7 +548,7 @@ function Checkout(props) {
                     </Grid>
                     <Grid xs={6} item>
                       <Typography align="right">
-                        {cart.data.subtotal.formatted_with_symbol}
+                        {cartSelector.cart.data.subtotal.formatted_with_symbol}
                       </Typography>
                     </Grid>
                   </Grid>

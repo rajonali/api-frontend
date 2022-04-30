@@ -15,12 +15,15 @@ import getCommerce from '../utils/commerce';
 
 import { PrismaClient } from "@prisma/client";
 
+import { useSelector, useDispatch } from 'react-redux';
+import { cartRetrieveRequest, cartRetrieveSuccess, selectCart, setCart } from '../redux/slices/cart';
+
 
 
 function Home(props) {
   const { products } = props;
 
-  console.log (products);
+
   return (
     <Layout title="Home" commercePublicKey={props.commercePublicKey}>
 <p>Velcome</p>   
@@ -29,9 +32,11 @@ function Home(props) {
 }
 
 export async function getStaticProps(ctx) {
+
+
   const commerce = getCommerce();
   const prisma = new PrismaClient();
-  console.log("dsa");
+
 
   const profile = await prisma.card.findUnique({
     where: { email: "dlaskjL@kdlajskl.com" }

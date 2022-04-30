@@ -3,7 +3,7 @@ import {
   CART_RETRIEVE_REQUEST,
   CART_RETRIEVE_SUCCESS,
   ORDER_SET,
-} from '../utils/constants';
+} from './types';
 
 
 

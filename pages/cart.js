@@ -24,26 +24,35 @@ import Layout from '../components/Layout';
 import getCommerce from '../utils/commerce';
 import { useStyles } from '../utils/styles';
 import { useContext } from 'react';
-import { Store } from '../components/Store';
+import { Store } from '../redux/Store';
 import { CART_RETRIEVE_SUCCESS } from '../utils/constants';
 import Router from 'next/router';
+import { useSelector, useDispatch } from 'react-redux';
+import { cartRetrieveRequest, cartRetrieveSuccess, selectCart } from '../redux/slices/cart';
+
+
 
 function Cart(props) {
   const classes = useStyles();
-  const { state, dispatch } = useContext(Store);
-  const { cart } = state;
 
+
+  const commerce = getCommerce(process.env.commercePublicKey);
+
+  const cartSelector = useSelector(selectCart)
+  const dispatch = useDispatch()
+
+  console.log(JSON.stringify(cartSelector))
   const removeFromCartHandler = async (lineItem) => {
     const commerce = getCommerce(props.commercePublicKey);
     const cartData = await commerce.cart.remove(lineItem.id);
-    dispatch({ type: CART_RETRIEVE_SUCCESS, payload: cartData.cart });
+    dispatch(cartRetrieveSuccess(cartData.cart));
   };
   const quantityChangeHandler = async (lineItem, quantity) => {
     const commerce = getCommerce(props.commercePublicKey);
     const cartData = await commerce.cart.update(lineItem.id, {
       quantity,
     });
-    dispatch({ type: CART_RETRIEVE_SUCCESS, payload: cartData.cart });
+    dispatch(cartRetrieveSuccess(cartData.cart));
   };
 
   const proccessToCheckoutHandler = () => {
@@ -53,9 +62,9 @@ function Cart(props) {
 
   return (
     <Layout title="Home" commercePublicKey={props.commercePublicKey}>
-      {cart.loading ? (
+      {cartSelector.loading ? (
         <CircularProgress />
-      ) : cart.data.line_items.length === 0 ? (
+      ) : cartSelector.line_items?.length === 0 ? (
         <Alert icon={false} severity="error">
           Cart is empty. <Link href="/">Go shopping</Link>
         </Alert>
@@ -78,7 +87,7 @@ function Cart(props) {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {cart.data.line_items.map((cartItem) => (
+                      {cartSelector.cart.data?.line_items?.map((cartItem) => (
                         <TableRow key={cartItem.name}>
                           <TableCell component="th" scope="row">
                             {cartItem.name}
@@ -123,12 +132,12 @@ function Cart(props) {
                     <ListItem>
                       <Grid container>
                         <Typography variant="h6">
-                          Subtotal: {cart.data.subtotal.formatted_with_symbol}
+                          Subtotal: {cartSelector.cart.data?.subtotal?.formatted_with_symbol}
                         </Typography>
                       </Grid>
                     </ListItem>
                     <ListItem>
-                      {cart.data.total_items > 0 && (
+                      {cartSelector.cart.data?.total_items > 0 && (
                         <Button
                           type="button"
                           fullWidth

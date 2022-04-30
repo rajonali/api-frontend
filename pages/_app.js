@@ -4,9 +4,16 @@ import client from '../apollo-client'
 import { AuthProvider} from '../utils/auth'
 import { useEffect } from 'react';
 import { StoreProvider } from '../redux/Store';
+import { wrapper, store } from "../redux/storee";
+import { Provider } from "react-redux";
+import getCommerce from '../utils/commerce';
+
+import { useSelector, useDispatch } from 'react-redux';
+import { cartRetrieveRequest, cartRetrieveSuccess, selectCart, setCart } from '../redux/slices/cart';
 
 MyApp.getInitialProps = async () => {
 
+  
   return {
     pageProps: {
       commercePublicKey: process.env.COMMERCE_PUBLIC_KEY,
@@ -17,6 +24,17 @@ MyApp.getInitialProps = async () => {
 
 function MyApp({ Component, pageProps }) {
 
+  const commerce = getCommerce(pageProps.commercePublicKey);
+  const cartSelector = useSelector(selectCart)
+
+  const dispatch = useDispatch()
+
+
+  const fetchCart = async () => {
+    dispatch(setCart(await commerce.cart.retrieve()));
+  };
+
+  
 
   useEffect(() => {
     // Remove the server-side injected CSS.
@@ -24,9 +42,14 @@ function MyApp({ Component, pageProps }) {
     if (jssStyles) {
       jssStyles.parentElement.removeChild(jssStyles);
     }
+
+
+    fetchCart()
+    
   }, []);
 
   return(
+    <Provider store={store}>
     <AuthProvider>
                 <StoreProvider>
 
@@ -34,8 +57,11 @@ function MyApp({ Component, pageProps }) {
   </StoreProvider>
 
 
-  </AuthProvider>)  
+  </AuthProvider>
+  </Provider>
+  
+  )  
  
 }
 
-export default MyApp
+export default wrapper.withRedux(MyApp);

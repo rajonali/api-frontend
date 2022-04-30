@@ -16,14 +16,14 @@ import Layout from '../../components/Layout';
 import getCommerce from '../../utils/commerce';
 import { useContext, useState } from 'react';
 import { useStyles } from '../../utils/styles';
-import { Store } from '../../components/Store';
-import { CART_RETRIEVE_SUCCESS } from '../../utils/constants';
 import Router from 'next/router';
 import { PrismaClient } from "@prisma/client";
 
 
+import { cartRetrieveRequest, cartRetrieveSuccess, selectCart } from '../../redux/slices/cart';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { useSession } from "next-auth/react"
+import { wrapper, store } from "../../redux/storee";
 
 
 export default function Product(props) {
@@ -31,27 +31,32 @@ export default function Product(props) {
   const [quantity, setQuantity] = useState(1);
 
   const classes = useStyles();
+  const commerce = getCommerce(process.env.commercePublicKey);
 
-  const { state, dispatch } = useContext(Store);
-  const { cart } = state;
-  const commerce = getCommerce(props.commercePublicKey);
+  const cartSelector = useSelector(selectCart)
+  const dispatch = useDispatch()
+  console.log("my cart selector"+ JSON.stringify(cartSelector))
 
-  const { data: session, status } = useSession()
+  
+
 
 
   const addToCartHandler = async () => {
-    const lineItem = cart.data.line_items.find(
+    const lineItem = cartSelector.cart.data.line_items?.find(
       (x) => x.product_id === product.id
     );
     if (lineItem) {
+      console.log("found item")
       const cartData = await commerce.cart.update(lineItem.id, {
         quantity: quantity,
       });
-      dispatch({ type: CART_RETRIEVE_SUCCESS, payload: cartData.cart });
+
+      dispatch(cartRetrieveSuccess(cartData.cart));
       Router.push('/cart');
     } else {
+      console.log("didnt fnid item")
       const cartData = await commerce.cart.add(product.id, quantity);
-      dispatch({ type: CART_RETRIEVE_SUCCESS, payload: cartData.cart });
+      dispatch(cartRetrieveSuccess(cartData.cart));
       Router.push('/cart');
     }
 
@@ -193,7 +198,6 @@ export default function Product(props) {
 
 export async function getServerSideProps({ params }) {
   const { id } = params;
-
 
 
 

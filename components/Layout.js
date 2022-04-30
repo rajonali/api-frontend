@@ -14,16 +14,12 @@ import {
 import { theme, useStyles } from '../utils/styles';
 import Head from 'next/head';
 import NextLink from 'next/link';
-import {
-  CART_RETRIEVE_REQUEST,
-  CART_RETRIEVE_SUCCESS,
-} from '../utils/constants';
 import { Store } from '../redux/Store';
 import getCommerce from '../utils/commerce';
 
 
-
-import prisma from '@prisma/client'
+import { cartRetrieveRequest, cartRetrieveSuccess, selectCart } from '../redux/slices/cart';
+import { useSelector, useDispatch } from 'react-redux';
 
 export default function Layout({
   children,
@@ -31,19 +27,18 @@ export default function Layout({
   title = 'EMS',
 }) {
   const classes = useStyles();
-  const { state, dispatch } = useContext(Store);
-  const { cart } = state;
 
-
-
+  const cartSelector = useSelector(selectCart)
+  const dispatch = useDispatch()
+  
   useEffect(() => {
 
     const fetchCart = async () => {
       
       const commerce = getCommerce(commercePublicKey);
-      dispatch({ type: CART_RETRIEVE_REQUEST });
+      dispatch(cartRetrieveRequest());
       const cartData = await commerce.cart.retrieve();
-      dispatch({ type: CART_RETRIEVE_SUCCESS, payload: cartData });
+      dispatch(cartRetrieveSuccess(cartData));
       
       // TODO save cart data to local db 
 
@@ -116,10 +111,10 @@ export default function Layout({
                   href="/cart"
                   className={classes.link}
                 >
-                  {cart.loading ? (
+                  {cartSelector.total_items ? (
                     <CircularProgress />
-                  ) : cart.data.total_items > 0 ? (
-                    <Badge badgeContent={cart.data.total_items} color="primary">
+                  ) : cartSelector.total_items > 0 ? (
+                    <Badge badgeContent={cartSelector.total_items} color="primary">
                       Cart
                     </Badge>
                   ) : (
@@ -131,7 +126,10 @@ export default function Layout({
           </Toolbar>
         </AppBar>
         <Container component="main" className={classes.main}>
+
+
           {children}
+
         </Container>
         <Container maxWidth="md" component="footer">
           <Box mt={5}>
