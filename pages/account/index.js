@@ -36,7 +36,7 @@ import Cookies from 'js-cookie';
 
 
 
-export default function Account(props) {
+ault function Account(props) {
     const { products } = props;
 
     const { state, dispatch } = useContext(Store);

@@ -17,6 +17,7 @@ import NextLink from 'next/link';
 import { Store } from '../redux/Store';
 import getCommerce from '../utils/commerce';
 
+import { setUser, selectUser } from '../redux/slices/auth';
 
 import { cartRetrieveRequest, cartRetrieveSuccess, selectCart } from '../redux/slices/cart';
 import { useSelector, useDispatch } from 'react-redux';
@@ -29,6 +30,8 @@ export default function Layout({
   const classes = useStyles();
 
   const cartSelector = useSelector(selectCart)
+
+  const authSelector = useSelector(selectUser)
   const dispatch = useDispatch()
   
   useEffect(() => {
@@ -39,7 +42,8 @@ export default function Layout({
       dispatch(cartRetrieveRequest());
       const cartData = await commerce.cart.retrieve();
       dispatch(cartRetrieveSuccess(cartData));
-      
+//      dispatch(setUser({id:2, username:'fhsdjkfsdhk'}))
+
       // TODO save cart data to local db 
 
     };
@@ -76,6 +80,7 @@ export default function Layout({
           className={classes.appBar}
         >
           <Toolbar style={{display:'flex', flex:1, justifyContent:'space-evenly', alignItems:'center'}}>
+            <div>
             <NextLink href="/">
               <Link
                 variant="h6"
@@ -88,21 +93,23 @@ export default function Layout({
               </Link>
               
             </NextLink>
+            </div>
+            <div>
             <NextLink href="/products">
             <Link href="/products">
               Products
               </Link>
             </NextLink>
-            
+            </div>
+
+            <div>
             <NextLink href="/account">
             <Link href="/account">
               My Account
               </Link>
             </NextLink>
-            <div>
-            <p>
-            </p>
             </div>
+         <div>
             <nav>
               <NextLink href="/cart">
                 <Link
@@ -123,6 +130,7 @@ export default function Layout({
                 </Link>
               </NextLink>
             </nav>
+            </div>
           </Toolbar>
         </AppBar>
         <Container component="main" className={classes.main}>

@@ -10,6 +10,11 @@ import getCommerce from '../utils/commerce';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { cartRetrieveRequest, cartRetrieveSuccess, selectCart, setCart } from '../redux/slices/cart';
+import {setUser} from '../redux/slices/auth';
+
+import {useAuth} from '../utils/auth'
+
+
 
 MyApp.getInitialProps = async () => {
 
@@ -27,12 +32,22 @@ function MyApp({ Component, pageProps }) {
   const commerce = getCommerce(pageProps.commercePublicKey);
   const cartSelector = useSelector(selectCart)
 
+  
+
+
   const dispatch = useDispatch()
 
 
   const fetchCart = async () => {
     dispatch(setCart(await commerce.cart.retrieve()));
+    dispatch(setUser({id:2, username:'fhsdjkfsdhk'}))
   };
+
+  const fetchAuth = async () => {
+    const { user } = useAuth();
+
+    dispatch(setUser(user))
+  }
 
   
 
@@ -51,10 +66,8 @@ function MyApp({ Component, pageProps }) {
   return(
     <Provider store={store}>
     <AuthProvider>
-                <StoreProvider>
 
   <Component {...pageProps} />
-  </StoreProvider>
 
 
   </AuthProvider>

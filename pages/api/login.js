@@ -15,6 +15,8 @@ import {
   import Cookies from 'cookies'
 import { serialize } from 'cookie';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { selectUser, userLogin, userLogout } from '../../redux/slices/auth';
 
 
 
@@ -22,7 +24,6 @@ import {sign } from 'jsonwebtoken'
 
 
 export default async (req, res) => {
-      
 
     const secret = process.env.SECRET;
 
@@ -51,7 +52,6 @@ export default async (req, res) => {
 
 
         res.setHeader('Set-Cookie', serialized);
-
         res.status(200).json(req.body )
 
 
