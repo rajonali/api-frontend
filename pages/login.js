@@ -7,7 +7,7 @@ import {useAuth} from '../utils/auth'
 
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser, userLogin, userLogout } from '../redux/slices/auth';
-
+import { authActions} from '../utils/auth2'
 
 
 export default function Login() {
@@ -16,9 +16,7 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-
-  const { signIn, isSignedIn, signOut, authToken} = useAuth();
-
+  const {signIn, signOut, getUserCookie} = authActions;
 
   const dispatch = useDispatch()
   const authSelector = useSelector(selectUser)
@@ -27,9 +25,9 @@ export default function Login() {
   async function onSubmit(e) {
     e.preventDefault();
     const data  = await signIn({username, password})
-    console.log("hitgurl" + JSON.stringify(data))
-    dispatch(userLogin(data))
+//    dispatch(userLogin(data))
   }
+
 
 
   return (
@@ -37,7 +35,7 @@ export default function Login() {
       <form onSubmit={(e) => onSubmit(e)}>
         <button onClick={(e) => (signOut())} type="button">signout</button>
 
-{authToken ? (<p>Logged In</p>):(<span>Not Logged In</span>)}
+{"dsada" ? (<p>Logged In</p>):(<span>Not Logged In</span>)}
 
         <input type="text" placeholder='username' onChange={(e) => setUsername(e.target.value)} />
         <input type="password" placeholder='password' onChange={(e) => setPassword(e.target.value)} />

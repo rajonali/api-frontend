@@ -36,10 +36,10 @@ import Cookies from 'js-cookie';
 
 
 
-ault function Account(props) {
+export default function Account(props) {
     const { products } = props;
 
-    const { state, dispatch } = useContext(Store);
+    //const { state, dispatch } = useContext(Store);
     const {
       handleSubmit,
       control,
@@ -47,15 +47,16 @@ ault function Account(props) {
       setValue,
     } = useForm();
     const router = useRouter();
-    const { userInfo } = state;
+   // const { userInfo } = state;
   
     useEffect(() => {
-      if (!userInfo) {
+     // if (!userInfo) {
         //return router.push('/login');
-        return;
-      }
-      setValue('name', userInfo.name);
-      setValue('email', userInfo.email);
+        //return;
+      //}
+      return
+      //setValue('name', userInfo.name);
+      //setValue('email', userInfo.email);
     }, []);
     const submitHandler = async ({ name, email, password, confirmPassword }) => {
       if (password !== confirmPassword) {

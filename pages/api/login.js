@@ -21,6 +21,7 @@ import { selectUser, userLogin, userLogout } from '../../redux/slices/auth';
 
 
 import {sign } from 'jsonwebtoken'
+import setAuthorizationToken from '../../utils/setAuthorizeToken';
 
 
 export default async (req, res) => {
@@ -29,13 +30,14 @@ export default async (req, res) => {
 
 
     const {accessToken, refreshToken } = req.body;
-    const {username}  = req.body.user;
+    const {username, id}  = req.body.user;
 
     if (username) {
         const token = sign(
             {
                 username,
                 refreshToken,
+                id
             },
             secret
         )
@@ -52,7 +54,9 @@ export default async (req, res) => {
 
 
         res.setHeader('Set-Cookie', serialized);
+        res.setHeader('Authorization', `Bearer ${token}`)
         res.status(200).json(req.body )
+
 
 
 

@@ -29,6 +29,7 @@ import { CART_RETRIEVE_SUCCESS } from '../utils/constants';
 import Router from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import { cartRetrieveRequest, cartRetrieveSuccess, selectCart } from '../redux/slices/cart';
+import { selectUser } from '../redux/slices/auth';
 
 
 
@@ -39,9 +40,13 @@ function Cart(props) {
   const commerce = getCommerce(process.env.commercePublicKey);
 
   const cartSelector = useSelector(selectCart)
+  const authSelector = useSelector(selectUser)
+
   const dispatch = useDispatch()
 
   console.log(JSON.stringify(cartSelector))
+  console.log(JSON.stringify(authSelector))
+
   const removeFromCartHandler = async (lineItem) => {
     const commerce = getCommerce(props.commercePublicKey);
     const cartData = await commerce.cart.remove(lineItem.id);

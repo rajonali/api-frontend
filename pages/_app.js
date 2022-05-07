@@ -12,13 +12,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { cartRetrieveRequest, cartRetrieveSuccess, selectCart, setCart } from '../redux/slices/cart';
 import {setUser} from '../redux/slices/auth';
 
+import { getCookies, getCookie, setCookies, removeCookies } from 'cookies-next';
+
 import {useAuth} from '../utils/auth'
-
-
+import jwt_decode from "jwt-decode";
 
 MyApp.getInitialProps = async () => {
-
-  
   return {
     pageProps: {
       commercePublicKey: process.env.COMMERCE_PUBLIC_KEY,
@@ -32,7 +31,7 @@ function MyApp({ Component, pageProps }) {
   const commerce = getCommerce(pageProps.commercePublicKey);
   const cartSelector = useSelector(selectCart)
 
-  
+
 
 
   const dispatch = useDispatch()
@@ -40,15 +39,50 @@ function MyApp({ Component, pageProps }) {
 
   const fetchCart = async () => {
     dispatch(setCart(await commerce.cart.retrieve()));
-    dispatch(setUser({id:2, username:'fhsdjkfsdhk'}))
   };
 
   const fetchAuth = async () => {
-    const { user } = useAuth();
+    //TODO call a function that checks for cookie in local storage. 
+    //Create a function in utils/auth service context 
+    //If true return user obj and setUser to that return value 
+    
 
-    dispatch(setUser(user))
+    //post request to server route and call dispatch on ssr?
+    //else returns user state and auth status to put in dispatch 
+
+
+    //make call to /api route that returns decoded cookie
+    //dispatch that 
+
+    console.log("my client side cookies"+ JSON.stringify(getCookies()))
+
+    const myReq = await fetch('/api/authToken', {
+      method: "post",
+      headers : {
+        "Content-Type": "application/json"
+      },
+      body: ''
+    }).then(response => response.text())
+    .then(data => {
+    console.log(jwt_decode(data));
+    dispatch(setUser(jwt_decode(data)))
+    }).catch(error => {
+      console.log(error);
+  });
+
+
+    //console.log(JSON.parse(myReq.body))
+
+
+
+
   }
 
+
+  const getServerSideProps = ({ req, res }) => {
+    console.log(req.res.cookie)
+  return { props: {}};
+}
   
 
   useEffect(() => {
@@ -59,7 +93,8 @@ function MyApp({ Component, pageProps }) {
     }
 
 
-    fetchCart()
+    fetchCart();
+    fetchAuth();
     
   }, []);
 

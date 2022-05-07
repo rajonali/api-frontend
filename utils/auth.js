@@ -15,8 +15,7 @@ import axios from 'axios';
 
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUser, userLogin, userLogout } from '../redux/slices/auth';
-
+import { selectUser, userLogin, userLogout, setUser } from '../redux/slices/auth';
 
 
 
@@ -43,10 +42,15 @@ export const useAuth = () => {
   return useContext(authContext)
 }
 
-function useProvideAuth() {
-  const [authToken, setAuthToken] = useState(null)
-  const [user, setUser] = useState('')
 
+
+function useProvideAuth() {
+  const [authToken, setAuthToken] = useState("")
+  const [userr, setUserr] = useState('')
+  const dispatch = useDispatch();
+
+
+  
   const getAuthHeaders = () => {
     if (!authToken)
     {return null }
@@ -81,9 +85,6 @@ function useProvideAuth() {
 
   const signIn = async ({ username, password }) => {
 
-
-    
-
     const client = createApolloClient()
     const LoginMutation = gql`
       mutation login($input: LoginUserInput!) {
@@ -114,12 +115,12 @@ function useProvideAuth() {
         },
         body: JSON.stringify(result.data.login)
       });
+      dispatch(setUser(result.data.login))
 
       //if true, return request with auth header cookie          
       return(result.data.login.user)
 
     }
-    setUser(result.data.login.username)
     setAuthToken(result.data.login.accessToken)
 
     return(result.data.login.user)
@@ -140,6 +141,6 @@ function useProvideAuth() {
     signOut,
     isSignedIn,
     authToken,
-    user
+    userr
   }
 }
