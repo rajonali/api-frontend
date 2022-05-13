@@ -15,21 +15,69 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectUser, userLogin, userLogout, setUser } from '../redux/slices/auth';
 import Cookies from 'js-cookie'
 
-    const getUserCookie = () => {
-        const authCookie = Cookies.get('token')
-    } 
-    
-    const getAuthHeaders = () => {
-      if (!authToken)
-      {return null }
+import { useRouter } from "next/router";
+import Router from 'next/router';
+
+
+export default class AuthService {
+
+    constructor() {
       
-      return {
-        authorization: `Bearer ${authToken}`,
-      }
+      return
     }
+
+
+//TODO
+    setToken(token) {
+      // Saves user token to localStorage
+      localStorage.setItem('token', token)
+  }
+
+    getToken = () => {
+//check redux state or cookie?
+
+  console.log(localStorage.getItem('token'))
+      
+
+// try {
+//  // Retrieves the user token from localStorage
+// //      console.log(localStorage.getItem('token'))
+// const myReq = await fetch('/api/authToken', {
+//   method: "post",
+//   headers : {
+//     "Content-Type": "application/json"
+//   },
+//   body: ''
+// })
+// //Catch error with try/catch
+// return myReq
+// //.catch(err => console.log(err))
+// } catch(error){
+//   console.log(error)
+//   return null
+// }
+
+  }
+  fetch(url, options) {
+    // performs api calls sending the required authentication headers
+    const headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    }
+
+    if (this.loggedIn()) {
+        headers['Authorization'] = 'Bearer ' + this.getToken()
+    }
+
+    return fetch(url, {
+            headers,
+            ...options
+        })
+        .then(this._checkStatus)
+        .then(response => response.json())
+}
   
-  
-    function createApolloClient() {
+    createApolloClient() {
   
       const link = new HttpLink({ uri: 'http://localhost:3001/graphql' })
   
@@ -46,18 +94,15 @@ import Cookies from 'js-cookie'
       });
     }
   
-    const signOut = () => {
+    signOut = () => {
       setAuthToken(null);
-      //TODO delete cookies 
+      localStorage.removeItem('token')
+      dispatch(userLogout()) ;
     }
   
-     const signIn = async ({ username, password }) => {
-        
-    
-
-
-      const client = createApolloClient()
-      const LoginMutation = gql`
+    signIn = async ({ username, password }) => {
+    const client = this.createApolloClient()
+    const LoginMutation = gql`
         mutation login($input: LoginUserInput!) {
           login(input: $input) {
             accessToken,
@@ -91,26 +136,22 @@ import Cookies from 'js-cookie'
         return(result.data.login.user)
   
       }
+      Router.push('/account')
+
       setAuthToken(result.data.login.accessToken)
   
       return(result.data.login.user)
   
     }
   
-    const isSignedIn = () => {        
-      if (authToken) {
+    isSignedIn = () => {        
+      if (this.getToken()) {
         return true
       } else {
         return false
       }
     }
   
-    export const authActions = {
-        signIn,
-        signOut,
-        isSignedIn,
-        getAuthHeaders,
-        getUserCookie,
-    };
+}
 
 

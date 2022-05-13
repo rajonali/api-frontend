@@ -11,7 +11,7 @@ import getCommerce from '../../utils/commerce';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
-
+import withAuth from '../../utils/withAuth'
 import {
     Box,
     Card,
@@ -36,7 +36,7 @@ import Cookies from 'js-cookie';
 
 
 
-export default function Account(props) {
+function Account(props) {
     const { products } = props;
 
     //const { state, dispatch } = useContext(Store);
@@ -138,7 +138,10 @@ export default function Account(props) {
   );
 }
 
-export async function getStaticProps(ctx) {
+
+
+
+export async function getInitialProps(ctx) {
     const commerce = getCommerce();
     const { data: products } = await commerce.products.list();
     return {
@@ -148,4 +151,6 @@ export async function getStaticProps(ctx) {
       },
     };
   }
-  
+
+
+  export default withAuth(Account)

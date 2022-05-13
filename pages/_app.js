@@ -1,9 +1,7 @@
 import '../styles/globals.css'
 import {ApolloProvider, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
 import client from '../apollo-client'
-import { AuthProvider} from '../utils/auth'
 import { useEffect } from 'react';
-import { StoreProvider } from '../redux/Store';
 import { wrapper, store } from "../redux/storee";
 import { Provider } from "react-redux";
 import getCommerce from '../utils/commerce';
@@ -14,7 +12,6 @@ import {setUser} from '../redux/slices/auth';
 
 import { getCookies, getCookie, setCookies, removeCookies } from 'cookies-next';
 
-import {useAuth} from '../utils/auth'
 import jwt_decode from "jwt-decode";
 
 MyApp.getInitialProps = async () => {
@@ -54,7 +51,6 @@ function MyApp({ Component, pageProps }) {
     //make call to /api route that returns decoded cookie
     //dispatch that 
 
-    console.log("my client side cookies"+ JSON.stringify(getCookies()))
 
     const myReq = await fetch('/api/authToken', {
       method: "post",
@@ -64,17 +60,10 @@ function MyApp({ Component, pageProps }) {
       body: ''
     }).then(response => response.text())
     .then(data => {
-    console.log(jwt_decode(data));
     dispatch(setUser(jwt_decode(data)))
     }).catch(error => {
       console.log(error);
   });
-
-
-    //console.log(JSON.parse(myReq.body))
-
-
-
 
   }
 
@@ -100,12 +89,10 @@ function MyApp({ Component, pageProps }) {
 
   return(
     <Provider store={store}>
-    <AuthProvider>
 
   <Component {...pageProps} />
 
 
-  </AuthProvider>
   </Provider>
   
   )  

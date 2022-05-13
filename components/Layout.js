@@ -34,26 +34,26 @@ export default function Layout({
   const authSelector = useSelector(selectUser)
   const dispatch = useDispatch()
   
-  useEffect(() => {
 
-    const fetchCart = async () => {
+
+  const fetchCart = async () => {
       
-      const commerce = getCommerce(commercePublicKey);
-      dispatch(cartRetrieveRequest());
-      const cartData = await commerce.cart.retrieve();
-      dispatch(cartRetrieveSuccess(cartData));
+    const commerce = getCommerce(commercePublicKey);
+    dispatch(cartRetrieveRequest());
+    const cartData = await commerce.cart.retrieve();
+    dispatch(cartRetrieveSuccess(cartData));
 //      dispatch(setUser({id:2, username:'fhsdjkfsdhk'}))
 
-      // TODO save cart data to local db 
+    // TODO save cart data to local db 
 
-    };
+  };
 
 
-    const fetchUser = async () => {
-      // TODO get user data hook from useAuth context (auth.js)
-      // dispatch auth request and auth retrieve success
 
-    }
+
+  useEffect(() => {
+
+   
 
     fetchCart();
     //fetchUser();
@@ -131,6 +131,18 @@ export default function Layout({
               </NextLink>
             </nav>
             </div>
+
+
+
+            <div>
+            <nav>
+
+              {authSelector }
+              
+            </nav>
+            </div>
+
+
           </Toolbar>
         </AppBar>
         <Container component="main" className={classes.main}>

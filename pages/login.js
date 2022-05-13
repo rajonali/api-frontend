@@ -1,14 +1,10 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
 import React, { useState, useEffect } from 'react';
-import {useRouter} from "next/router"
-import {useAuth} from '../utils/auth'
 
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser, userLogin, userLogout } from '../redux/slices/auth';
-import { authActions} from '../utils/auth2'
+import AuthService from '../utils/AuthService'
 
+import Router from 'next/router';
 
 export default function Login() {
 
@@ -16,15 +12,17 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const {signIn, signOut, getUserCookie} = authActions;
+//  const {signIn, signOut, getUserCookie} = authActions;
 
   const dispatch = useDispatch()
   const authSelector = useSelector(selectUser)
 
+  const auth = new AuthService()
 
   async function onSubmit(e) {
     e.preventDefault();
-    const data  = await signIn({username, password})
+    const data  = await auth.signIn({username, password})
+    Router.push('/account')
 //    dispatch(userLogin(data))
   }
 

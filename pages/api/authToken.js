@@ -1,30 +1,4 @@
 
-import axios from 'axios';
-import { NextApiRequest, NextApiResponse } from 'next';
-import {useAuth} from '../../utils/auth'
-
-import {
-    ApolloProvider,
-    ApolloClient,
-    InMemoryCache,
-    HttpLink,
-    gql,
-    concat,
-     ApolloLink
-  } from '@apollo/client'
-
-import { useSelector, useDispatch } from 'react-redux';
-import { selectUser, userLogin, userLogout } from '../../redux/slices/auth';
-
-
-
-import {sign } from 'jsonwebtoken'
-import setAuthorizationToken from '../../utils/setAuthorizeToken';
-import jwt_decode from "jwt-decode";
-import Cookies from 'js-cookie'
-import { getCookies } from 'cookies-next';
-
-
 export default async (req, res) => {
     const myCookies = req.headers.cookie;
     const str = myCookies.split('; ');
@@ -41,7 +15,7 @@ export default async (req, res) => {
 
     }
     else {
-        return res.json({message: "no token!"})
+        return res.status(500).json({ message: 'This is an error!' });
     }
 
 
